@@ -1,21 +1,12 @@
 <?php
-// db.php
-// Sesuaikan jika kamu ubah user/password MySQL di Laragon
-$host = 'localhost';
-$db   = 'campus_borrowing';
-$user = 'root';
-$pass = '';
-$charset = 'utf8mb4';
+$servername = "localhost";
+$username = "root"; // default Laragon
+$password = "";     // kosong di Laragon
+$database = "campus_borrowing";
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+$conn = mysqli_connect($servername, $username, $password, $database);
 
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (PDOException $e) {
-    exit('Koneksi DB gagal: ' . $e->getMessage());
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
 }
+?>
