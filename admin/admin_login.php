@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../db.php'; // pastikan path ini benar
+require '../db.php'; // pastikan file ini membuat $conn (mysqli)
 
 $error = '';
 
@@ -12,11 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'NIM/NIP dan password wajib diisi.';
     } else {
         // Ambil user yang role = admin
-        $stmt = $pdo->prepare("SELECT id, name, nim_nip, password, role FROM users WHERE nim_nip = ? AND role = 'admin' LIMIT 1");
-        $stmt->execute([$nim_nip]);
-        $user = $stmt->fetch();
+        $stmt = $conn->prepare("SELECT id, name, nim_nip, password, role FROM users WHERE nim_nip = ? AND role = 'admin' LIMIT 1");
+        $stmt->bind_param("s", $nim_nip);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
 
-        // Karena kamu minta tanpa hash -> bandingkan langsung
         if ($user && $password === $user['password']) {
             // login sukses
             $_SESSION['admin_id'] = $user['id'];
@@ -26,17 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'NIM/NIP atau password salah, atau bukan admin.';
         }
+        $stmt->close();
     }
 }
-
-
-
-
-
-
-
-
-
 ?>
 <!doctype html>
 <html lang="id">
